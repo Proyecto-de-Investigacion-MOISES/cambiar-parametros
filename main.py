@@ -1,10 +1,16 @@
 import pandas as pd
 import numpy as np
+import os
 
 from pandarallel import pandarallel
 
 # Inicializar pandarallel
 pandarallel.initialize(progress_bar=True)
+
+# Create the output folders if they don't exist
+os.makedirs("output", exist_ok=True)
+os.makedirs("output/static", exist_ok=True)
+os.makedirs("output/dynamic/soil_moisture/04-2023/30-04-2023", exist_ok=True)
 
 
 def rellenar_con_valor_cercano(serie, df, ncols, nrows):
@@ -110,7 +116,7 @@ serie_tasas_secado = [series[0], series[1], series[2]]
 
 df_propiedades_hidricas = pd.concat(serie_propiedades_hidricas, axis=1)
 
-df_propiedades_hidricas.to_parquet("output/propiedades_hidricas_downsampled.parquet")
+df_propiedades_hidricas.to_parquet("output/static/propiedades_hidricas_downsampled.parquet")
 
 print(df_propiedades_hidricas)
 
@@ -141,15 +147,15 @@ df_parquet = pd.concat(
     axis=1,
 )
 
-df_parquet.to_parquet("output/tasas_secado_downsampled.parquet")
+df_parquet.to_parquet("output/static/tasas_secado_downsampled.parquet")
 
 df_marchitez = pd.DataFrame()
 df_marchitez["soil_moisture"] = df_parquet[["punto_marchitez"]]
 
-df_marchitez.to_parquet("output/23.parquet")
+df_marchitez.to_parquet("output/dynamic/soil_moisture/04-2023/30-04-2023/23.parquet")
 
-df = pd.read_parquet("output/propiedades_hidricas_downsampled.parquet")
-df2 = pd.read_parquet("output/tasas_secado_downsampled.parquet")
+df = pd.read_parquet("output/static/propiedades_hidricas_downsampled.parquet")
+df2 = pd.read_parquet("output/static/tasas_secado_downsampled.parquet")
 print(df)
 print(df2)
 print(df_marchitez)
